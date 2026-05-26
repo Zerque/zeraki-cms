@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zeraki CMS - Curriculum Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--g5:#46AF4D;--n0:#fff;--n9:#131313}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:linear-gradient(135deg,#235726 0%,#34833A 45%,#46AF4D 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;color:var(--n9)}
+.container{background:var(--n0);border-radius:20px;padding:40px;max-width:500px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.16)}
+h1{color:var(--g5);margin-bottom:10px;font-size:2rem}
+p{color:#666;margin-bottom:20px;line-height:1.6}
+.btn{background:var(--g5);color:white;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:1rem;display:inline-block;margin:10px;transition:background .3s}
+.btn:hover{background:#34833A}
+.demo{background:#F5F5F5;padding:15px;border-radius:8px;margin:20px 0;font-size:.9rem;color:#555}
+.download{color:var(--g5);text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+<div class="container">
+ <h1>🎓 Zeraki CMS</h1>
+ <p><strong>Curriculum Management System</strong></p>
+ <p>A comprehensive web and mobile platform for African schools to manage curriculum, lesson plans, and records of work.</p>
+ 
+ <div class="demo">
+  <p><strong>📱 Demo Credentials:</strong></p>
+  <p>Teacher: <code>teacher@school.ac.ke</code> / <code>password123</code></p>
+  <p>Admin: <code>admin@school.ac.ke</code> / <code>admin123</code></p>
+ </div>
+
+ <p>
+  <button class="btn" onclick="document.location.href='/app'">Launch Web App →</button><br>
+  <a href="/ZerakiCMS.apk" class="download"><i class="fa-solid fa-download"></i> Download APK</a>
+ </p>
+
+ <p style="margin-top:30px;font-size:.85rem;color:#999">
+  Zeraki &copy; 2026 | Built for African classrooms
+ </p>
+</div>
+</body>
+</html>
