@@ -1,0 +1,51 @@
+## Spring Boot
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/gradle-wrapper.jar
+!**/gradle-wrapper.properties
+gradle-app.setting
+!gradle/wrapper
+.gradletasknamecache
+target/
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+HELP.md
+
+## IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+## Maven
+*.jar
+*.war
+*.nar
+!/gradle/wrapper/gradle-wrapper.jar
+.flattened-pom.xml
+
+## Hibernate, Datasource
+spring.jpa.hibernate.ddl-auto=none
+.h2.server.properties
+
+## Environment
+.env
+.env.local
+*.log
+
+## OS
+.DS_Store
+Thumbs.db
