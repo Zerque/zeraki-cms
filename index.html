@@ -2,43 +2,78 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Zeraki CMS - Curriculum Management</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
+<title>Zeraki CMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<style>
-:root{--g5:#46AF4D;--n0:#fff;--n9:#131313}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'DM Sans',sans-serif;background:linear-gradient(135deg,#235726 0%,#34833A 45%,#46AF4D 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;color:var(--n9)}
-.container{background:var(--n0);border-radius:20px;padding:40px;max-width:500px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(0,0,0,.16)}
-h1{color:var(--g5);margin-bottom:10px;font-size:2rem}
-p{color:#666;margin-bottom:20px;line-height:1.6}
-.btn{background:var(--g5);color:white;padding:12px 24px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:1rem;display:inline-block;margin:10px;transition:background .3s}
-.btn:hover{background:#34833A}
-.demo{background:#F5F5F5;padding:15px;border-radius:8px;margin:20px 0;font-size:.9rem;color:#555}
-.download{color:var(--g5);text-decoration:none;font-weight:600}
-</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
-<div class="container">
- <h1>🎓 Zeraki CMS</h1>
- <p><strong>Curriculum Management System</strong></p>
- <p>A comprehensive web and mobile platform for African schools to manage curriculum, lesson plans, and records of work.</p>
- 
- <div class="demo">
-  <p><strong>📱 Demo Credentials:</strong></p>
-  <p>Teacher: <code>teacher@school.ac.ke</code> / <code>password123</code></p>
-  <p>Admin: <code>admin@school.ac.ke</code> / <code>admin123</code></p>
+<div id="auth">
+ <div class="acard">
+  <div class="a-logo">
+   <div class="a-mark">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+     <path d="M12 2L4 6v6c0 5.1 3.4 9.8 8 11.1C17.6 21.8 21 17.1 21 12V6L12 2z" fill="white"/>
+     <path d="M9 12l2 2 4-4" stroke="#34833A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+   </div>
+  </div>
  </div>
-
- <p>
-  <button class="btn" onclick="document.location.href='/app'">Launch Web App →</button><br>
-  <a href="/ZerakiCMS.apk" class="download"><i class="fa-solid fa-download"></i> Download APK</a>
- </p>
-
- <p style="margin-top:30px;font-size:.85rem;color:#999">
-  Zeraki &copy; 2026 | Built for African classrooms
- </p>
 </div>
+
+<div id="app">
+ <div class="sidebar" id="sidebar"></div>
+ <div class="main"></div>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+// ═══ CONSTANTS ════════════════════════════════════════════════════════════
+const SUBJS=['Chemistry','Biology','Physics','Mathematics','English','Kiswahili','History','Geography','Business Studies','Computer Studies','Agriculture','Home Science','CRE','IRE'];
+const GRADES=['Form 1','Form 2','Form 3','Form 4','Grade 7','Grade 8','Grade 9','Grade 10','Year 10','Year 11'];
+
+// ═══ DB ═══════════════════════════════════════════════════════════════════
+const DB={
+  get(k){try{return JSON.parse(localStorage.getItem('z_'+k)||'[]')}catch{return[]}},
+  set(k,v){try{localStorage.setItem('z_'+k,JSON.stringify(v))}catch(e){}},
+  one(k){try{return JSON.parse(localStorage.getItem('z_'+k)||'null')}catch{return null}},
+  put(k,v){try{localStorage.setItem('z_'+k,JSON.stringify(v))}catch(e){}},
+  id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+};
+
+// Seed demo accounts
+(function seed(){
+  if(DB.get('users').length)return;
+  DB.set('users',[
+    {id:'u0',name:'Admin Zeraki',email:'admin@school.ac.ke',pwd:'admin123',role:'admin',school:'Comprehensive and Senior School',subjects:[],tsc:'',status:'active',created:new Date().toISOString()},
+    {id:'u1',name:'Ms. Wanjiku Kariuki',email:'teacher@school.ac.ke',pwd:'password123',role:'teacher',school:'Comprehensive and Senior School',subjects:['Chemistry','Physics'],tsc:'TSC-12345',status:'active',created:new Date().toISOString()},
+    {id:'u2',name:'Mr. John Kamau',email:'hod@school.ac.ke',pwd:'password123',role:'hod',school:'Comprehensive and Senior School',subjects:['Biology','Environmental Science'],tsc:'TSC-67890',status:'active',created:new Date().toISOString()}
+  ]);
+  DB.set('schools',[{id:'sch1',name:'Comprehensive and Senior School',county:'Nairobi',code:'CSS-001',created:new Date().toISOString()}]);
+})();
+
+// ═══ AUTH ═════════════════════════════════════════════════════════════════
+function doLogin(){
+  const em=(document.getElementById('l-email')?.value||'').trim();
+  const pw=document.getElementById('l-pwd')?.value||'';
+  const errEl=document.getElementById('l-err');
+  const errTx=document.getElementById('l-et');
+  if(errEl)errEl.style.display='none';
+  if(!em||!pw){if(errEl){errEl.style.display='flex';errTx.textContent='Please fill in both fields.';}return;}
+  const u=DB.get('users').find(x=>x.email===em&&x.pwd===pw);
+  if(!u){if(errEl){errEl.style.display='flex';errTx.textContent='Invalid email or password.';}return;}
+  if(u.role==='teacher'&&u.status!=='active'){if(errEl){errEl.style.display='flex';errTx.textContent='Your account has not been activated. Please contact your school admin.';}return;}
+  DB.put('session',u);
+}
+
+function doLogout(){
+  DB.put('session',null);
+}
+</script>
 </body>
 </html>
